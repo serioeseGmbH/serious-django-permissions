@@ -1,19 +1,16 @@
-from abc import ABC
 import importlib
 import inspect
 
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
-from helpers.permissions import Permission
+from serious_django_permissions import Permission
 
 class Command(BaseCommand):
     """
     A command to aggregate the permissions out of all our apps and create them in django models
     """
-    help = 'create permissions defined anywhere in the current Django project'
+    help = "create permissions defined anywhere in the current Django project's apps"
 
     def handle(self, *args, **options):
         """
