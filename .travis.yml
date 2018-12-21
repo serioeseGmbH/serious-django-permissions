@@ -1,0 +1,12 @@
+language: python
+python:
+  - "3.5"
+  - "3.6"
+  - "3.7"
+deploy:
+  provider: pypi
+  user: serioeseGmbH
+  on:
+    tags: true
+  password:
+    secure: gzzvKduQDTismsPIUNRDKW+zuow8gMzbhlzrXw8LU2XG3VVuSZj9aD6ooo/njuoMx+hIe6NzT4INeLz12fIwSJE2Eyf59S8ov0H9JKxk+B7n9JUF2Ao05auklLdkIci5zC2VZ5z7pKoznh2/1/Bp8MsH7fJnh8kml7AmedF+UgaBDReeNouTHf4cJt8xduRDxi7pBD+CDvuJmjhhcVQWL+G70pYRvAAoaxhUsesiQxQAde7978eDj8otL8fLToyI+NO0Tfa+MCr/qNuxVi9DIrckIJAt0IDcHg/OZoVIaGOUfZIEza9qrN9WjEpb9GV09zDN9yGunpyFovT+5/ZtXBRZXFoC51TTpfNedLLszFm4ueoHiGkIRlr2PggVfNcUT4snpP6A4VDkNEwZd1BZ3D8Fp0IyzTJQgDVuVsp/RhbYwOqq5FzpiQwnvTJOCgX0fEUxosGbR6Zgj0zQErnfJDtlsYb3ndrNEcsHnnFDen/9LhURXVgpl8B2NrqGhMdsghRyadnMM/hIKZuapaOo+fxtQOcde6LB4SlWDMINiugBTrtS58X6NuvFdR5RaYq+nDoaG+mN0jze6kfg1ZHXpZQ7/Jq7KX5bsUJaWf/0acx2g8CxH9XLTaGDH0dXGFKGYLMmzPk6ybrYfM6Fu9pxwv21/fYlmaQg9H6/gRkvGeE=
