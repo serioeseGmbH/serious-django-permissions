@@ -28,14 +28,12 @@ Quick start
         'serious_django_permissions',
     ]
 
-2. Add ``serious_django_permissions.PermissionModelBackend`` to your ``AUTHENTICATION_BACKENDS`` setting::
+2. Add ``serious_django_permissions.PermissionModelBackend`` to your ``AUTHENTICATION_BACKENDS`` setting. This enables you to do permission checks like ``user.has_perm(SomePermission)``::
 
     AUTHENTICATION_BACKENDS = [
         ...
         'serious_django_permissions.PermissionModelBackend',
     ]
-
-This enables you to do permission checks like ``user.has_perm(SomePermission)``.
 
 3. In each app that should define a permission, import ``serious_django_permissions.Permission`` and create subclasses of it.
 
