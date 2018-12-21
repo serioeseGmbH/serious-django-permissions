@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='serious-django-permissions',
-    version='0.2',
+    version='0.2.post1',
     packages=find_packages(),
     include_package_data=True,
     license='MIT License',
