@@ -23,7 +23,7 @@ Quick start
 
 1. Install the package with pip::
 
-    pip install serious-django-graphene
+    pip install serious-django-permissions
 
 2. Add "serious_django_permissions" to your INSTALLED_APPS setting like this::
 
