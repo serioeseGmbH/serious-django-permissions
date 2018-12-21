@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     license='MIT License',
-    description='A Django extension to define and use Groups and Permissions from a central place, per app.'
+    description='A Django extension to define and use Groups and Permissions from a central place, per app.',
     long_description=README,
     url='https://serioese.gmbh/',
     author='Simon Welker',
