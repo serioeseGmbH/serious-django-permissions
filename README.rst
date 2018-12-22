@@ -32,18 +32,18 @@ Quick start
         'serious_django_permissions',
     ]
 
-3. Add ``serious_django_permissions.PermissionModelBackend`` to your ``AUTHENTICATION_BACKENDS`` setting. This enables you to do permission checks like ``user.has_perm(SomePermission)``::
+3. Add ``serious_django_permissions.permissions.PermissionModelBackend`` to your ``AUTHENTICATION_BACKENDS`` setting. This enables you to do permission checks like ``user.has_perm(SomePermission)``::
 
     AUTHENTICATION_BACKENDS = [
         ...
-        'serious_django_permissions.PermissionModelBackend',
+        'serious_django_permissions.permissions.PermissionModelBackend',
     ]
 
-4. In each app that should define a permission, import ``serious_django_permissions.Permission`` and create subclasses of it.
+4. In each app that should define a permission, import ``serious_django_permissions.permissions.Permission`` and create subclasses of it.
 
    The name of your subclasses must end in ``Permission``, and each subclass must define a ``description`` attribute. For instance, let's say you have the file ``myapp/permissions.py``::
 
-     from serious_django_permissions import Permission
+     from serious_django_permissions.permissions import Permission
 
      class MyPermission(Permission):
          model = 'MyModel' # should be a model inside myapp.models, or not defined for global permissions.
@@ -55,7 +55,7 @@ Quick start
 
    1. Create a file named something like ``some_app/groups.py`` inside one of your apps, or in the folder where your settings live. An example::
 
-	from serious_django_permissions import Group
+	from serious_django_permissions.groups import Group
 
 	from app_one.permissions import\
 	    AppOnePermissionA, AppOnePermissionB
