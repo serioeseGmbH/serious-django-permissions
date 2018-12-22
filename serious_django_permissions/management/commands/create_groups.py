@@ -3,11 +3,10 @@ import importlib
 import inspect
 import sys
 
-from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
-from serious_django_permissions import Group
+from serious_django_permissions.groups import Group
 
 class Command(BaseCommand):
     """

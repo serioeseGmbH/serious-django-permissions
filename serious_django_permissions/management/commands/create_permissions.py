@@ -1,10 +1,11 @@
+from abc import ABC
 import importlib
 import inspect
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
-from serious_django_permissions import Permission
+from serious_django_permissions.permissions import Permission
 
 class Command(BaseCommand):
     """
