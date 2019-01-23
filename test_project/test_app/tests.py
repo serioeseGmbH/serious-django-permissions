@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import Permission
 
@@ -8,7 +8,7 @@ from serious_django_permissions.management.commands import create_permissions, c
 from .models import RestrictedModel, UnrestrictedModel
 from .permissions import RestrictedModelPermission
 from .groups import AuthorizedGroup
-
+from .views import restricted_view
 
 class ManageFunctionTests(TestCase):
 
@@ -46,28 +46,45 @@ class UserLevelTests(TestCase):
             username='unauthorized_user'
         )
 
+        cls.factory = RequestFactory()
+
     def test_unauthorized_user_does_not_have_permission(self):
         self.assertFalse(self.unauthorized_user.has_perm(RestrictedModelPermission))
 
     def test_authorized_user_has_permission(self):
         self.assertTrue(self.authorized_user.has_perm(RestrictedModelPermission))
-        self.assertFalse(self.authorized_user.has_perm(None))
+
+    def test_unauthorized_user_accessing_view(self):
+        request = self.factory.get('/restricted_view')
+        request.user = self.unauthorized_user
+        response = restricted_view(request)
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_authorized_user_accessing_view(self):
+        request = self.factory.get('/restricted_view')
+        request.user = self.authorized_user
+        response = restricted_view(request)
+
+        self.assertEqual(response.status_code, 200)
 
 class GroupLevelTests(TestCase):
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.authorized_user = get_user_model().objects.create(
+    def setUp(self):
+        self.authorized_user = get_user_model().objects.create(
             username='authorized_user'
         )
-        cls.unauthorized_user = get_user_model().objects.create(
+        self.unauthorized_user = get_user_model().objects.create(
             username='unauthorized_user'
         )
         create_permissions.Command().handle()
         create_groups.Command().handle()
 
-    def test_authorize_user_via_group(self):
         self.authorized_user.groups.add(AuthorizedGroup.get_or_create()[0].pk)
+
+        self.factory = RequestFactory()
+
+    def test_authorized_user_has_permission(self):
         self.assertTrue(self.authorized_user.has_perm(RestrictedModelPermission))
 
     def test_unauthorized_user_does_not_have_permission(self):
