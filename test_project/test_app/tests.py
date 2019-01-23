@@ -15,21 +15,21 @@ class ManageFunctionTests(TestCase):
     def test_create_user_permissions(self):
 
         perm = Permission.objects.filter(codename=RestrictedModelPermission.codename)
-        self.assertFalse(perm, 'queryset is empty')
+        self.assertFalse(perm, 'The permission should not exist yet, but it does.')
 
         create_permissions.Command().handle()
 
         perm = Permission.objects.filter(codename=RestrictedModelPermission.codename)
-        self.assertTrue(perm, 'queryset is empty')
+        self.assertTrue(perm, 'The permission should exist, but it doesnt.')
 
     def test_create_group_permissions(self):
         perm = Group.objects.filter(name=AuthorizedGroup.group_name)
-        self.assertFalse(perm, 'queryset is not empty')
+        self.assertFalse(perm, 'The group should not exist yet, but it does.')
 
         create_groups.Command().handle()
 
         perm = Group.objects.filter(name=AuthorizedGroup.group_name)
-        self.assertTrue(perm, 'queryset is empty')
+        self.assertTrue(perm, 'The group should not exist yet, but it does.')
 
 
 class UserLevelTests(TestCase):
@@ -48,7 +48,6 @@ class UserLevelTests(TestCase):
 
     def test_unauthorized_user_does_not_have_permission(self):
         self.assertFalse(self.unauthorized_user.has_perm(RestrictedModelPermission))
-        self.assertTrue(self.unauthorized_user.has_perm(None))
 
     def test_authorized_user_has_permission(self):
         self.assertTrue(self.authorized_user.has_perm(RestrictedModelPermission))
@@ -70,8 +69,20 @@ class GroupLevelTests(TestCase):
     def test_authorize_user_via_group(self):
         self.authorized_user.groups.add(AuthorizedGroup.get_or_create()[0].pk)
         self.assertTrue(self.authorized_user.has_perm(RestrictedModelPermission))
-        self.assertFalse(self.authorized_user.has_perm(None))
 
     def test_unauthorized_user_does_not_have_permission(self):
         self.assertFalse(self.unauthorized_user.has_perm(RestrictedModelPermission))
-        self.assertTrue(self.unauthorized_user.has_perm(None))
+
+    def test_unauthorized_user_accessing_view(self):
+        request = self.factory.get('/restricted_view')
+        request.user = self.unauthorized_user
+        response = restricted_view(request)
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_authorized_user_accessing_view(self):
+        request = self.factory.get('/restricted_view')
+        request.user = self.authorized_user
+        response = restricted_view(request)
+
+        self.assertEqual(response.status_code, 200)
