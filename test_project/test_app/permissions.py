@@ -1,6 +1,6 @@
 from serious_django_permissions.permissions import Permission
 
-from .models import RestrictedModel # TODO: Add this step to documentation?
+from .models import RestrictedModel
 
 
 class RestrictedModelPermission(Permission):
