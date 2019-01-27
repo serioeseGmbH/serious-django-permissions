@@ -13,6 +13,9 @@ from .models import GlobalPermission
 
 
 class PermissionMetaclass(ABCMeta):
+    def __iter__(mcls):
+        return iter([mcls])
+
     def __new__(mcls, name, *args, **kwargs):
         cls = super(PermissionMetaclass, mcls).__new__(mcls, name, *args, **kwargs)
         if cls.__base__ == ABC:
@@ -40,11 +43,16 @@ class PermissionMetaclass(ABCMeta):
             cls.codename = camel_to_snake(name[:-10])
 
         cls.__perm_str__ = '{}.{}'.format(cls.app_label, cls.codename)
+        if cls.model is None:
+            cls.__perm_str__ = 'auth.{}'.format(cls.__perm_str__)
 
         return cls
 
 
 class Permission(ABC, metaclass=PermissionMetaclass):
+    model = None
+    description = ""
+
     @classmethod
     def get_or_create(cls):
         """
@@ -57,14 +65,18 @@ class Permission(ABC, metaclass=PermissionMetaclass):
                 app_label=cls.app_label,
                 model=cls.model.lower()
             )
+            return DjangoPermission.objects.get_or_create(
+                codename=cls.codename,
+                name=cls.description,
+                content_type=content_type
+            )
         else:
-            content_type = ContentType.objects.get_for_model(GlobalPermission)
-
-        return DjangoPermission.objects.get_or_create(
-            codename=cls.codename,
-            name=cls.description,
-            content_type=content_type
-        )
+            cls.codename = cls.app_label + '.' + cls.codename
+            return GlobalPermission.objects.get_or_create(
+                codename=cls.codename,
+                name=cls.description,
+                content_type=ContentType.objects.get_for_model(GlobalPermission)
+            )
 
     @classmethod
     def user_has_perm(cls, user):
