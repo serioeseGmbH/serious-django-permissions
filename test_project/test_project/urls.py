@@ -3,5 +3,6 @@ from django.urls import path
 from test_app import views
 
 urlpatterns = [
-    path('restricted-view/', views.restricted_view),
+    path('restricted-model-view/', views.restricted_model_view),
+    path('restricted-global-view/', views.restricted_global_view),
 ]
