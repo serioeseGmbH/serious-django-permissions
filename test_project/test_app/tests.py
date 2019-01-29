@@ -8,7 +8,7 @@ from serious_django_permissions.management.commands import create_permissions, c
 from .models import RestrictedModel, UnrestrictedModel
 from .permissions import RestrictedModelPermission, GlobalPermission
 from .groups import AuthorizedGroup
-from .views import restricted_view
+from .views import restricted_model_view, restricted_global_view
 
 class ManageFunctionTests(TestCase):
 
@@ -58,21 +58,23 @@ class UserLevelTests(TestCase):
 
     def test_unauthorized_user_does_not_have_permission(self):
         self.assertFalse(self.unauthorized_user.has_perm(RestrictedModelPermission))
+        self.assertFalse(RestrictedModelPermission.user_has_perm(self.unauthorized_user))
 
     def test_authorized_user_has_permission(self):
         self.assertTrue(self.authorized_user.has_perm(RestrictedModelPermission))
+        self.assertTrue(RestrictedModelPermission.user_has_perm(self.authorized_user))
 
     def test_unauthorized_user_accessing_view(self):
-        request = self.factory.get('/restricted_view')
+        request = self.factory.get('/restricted-model-view')
         request.user = self.unauthorized_user
-        response = restricted_view(request)
+        response = restricted_model_view(request)
 
         self.assertEqual(response.status_code, 302)
 
     def test_authorized_user_accessing_view(self):
-        request = self.factory.get('/restricted_view')
+        request = self.factory.get('/restricted-model-view')
         request.user = self.authorized_user
-        response = restricted_view(request)
+        response = restricted_model_view(request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -99,16 +101,16 @@ class GroupLevelTests(TestCase):
         self.assertFalse(self.unauthorized_user.has_perm(RestrictedModelPermission))
 
     def test_unauthorized_user_accessing_view(self):
-        request = self.factory.get('/restricted_view')
+        request = self.factory.get('/restricted-model-view')
         request.user = self.unauthorized_user
-        response = restricted_view(request)
+        response = restricted_model_view(request)
 
         self.assertEqual(response.status_code, 302)
 
     def test_authorized_user_accessing_view(self):
-        request = self.factory.get('/restricted_view')
+        request = self.factory.get('/restricted-model-view')
         request.user = self.authorized_user
-        response = restricted_view(request)
+        response = restricted_model_view(request)
 
         self.assertEqual(response.status_code, 200)
 
@@ -135,15 +137,15 @@ class GlobalLevelTests(TestCase):
         self.assertTrue(self.authorized_user.has_perm(GlobalPermission))
 
     def test_unauthorized_user_accessing_view(self):
-        request = self.factory.get('/restricted_view')
+        request = self.factory.get('/restricted-global-view')
         request.user = self.unauthorized_user
-        response = restricted_view(request)
+        response = restricted_global_view(request)
 
         self.assertEqual(response.status_code, 302)
 
     def test_authorized_user_accessing_view(self):
-        request = self.factory.get('/restricted_view')
+        request = self.factory.get('/restricted-global-view')
         request.user = self.authorized_user
-        response = restricted_view(request)
+        response = restricted_global_view(request)
 
         self.assertEqual(response.status_code, 200)
