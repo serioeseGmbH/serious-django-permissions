@@ -34,7 +34,7 @@ class PermissionMetaclass(ABCMeta):
             raise ImproperlyConfigured(
                 "A Permission class's name must end with 'Permission'."
             )
-        if not hasattr(cls, 'description') or not isinstance(cls.description, str):
+        if not cls.description or not isinstance(cls.description, str):
             raise ImproperlyConfigured(
                 "A Permission class must have a 'description' attribute."
             )
