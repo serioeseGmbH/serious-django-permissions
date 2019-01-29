@@ -44,7 +44,7 @@ class PermissionMetaclass(ABCMeta):
 
         cls.__perm_str__ = '{}.{}'.format(cls.app_label, cls.codename)
         if cls.model is None:
-            cls.__perm_str__ = 'auth.{}'.format(cls.__perm_str__)
+            cls.__perm_str__ = 'serious_django_permissions.{}'.format(cls.__perm_str__)
 
         return cls
 
@@ -74,8 +74,7 @@ class Permission(ABC, metaclass=PermissionMetaclass):
             cls.codename = cls.app_label + '.' + cls.codename
             return GlobalPermission.objects.get_or_create(
                 codename=cls.codename,
-                name=cls.description,
-                content_type=ContentType.objects.get_for_model(GlobalPermission)
+                name=cls.description
             )
 
     @classmethod
