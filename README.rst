@@ -87,6 +87,4 @@ Authorization
 -------------
 
 Setting a permission for a model does not automatically restrict the access to the model.
-Authorization still has to be checked via the view. Check the
- [Django documenation on how to authorize access to views](https://docs.djangoproject.com/en/2.1/topics/auth/default/#authentication-in-web-requests)
- for further information.
+Authorization still has to be checked via the view. Check the `Django documentation on how to authorize access to views <https://docs.djangoproject.com/en/2.1/topics/auth/default/#authentication-in-web-requests>`_ for further information.
