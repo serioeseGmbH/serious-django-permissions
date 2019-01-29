@@ -51,6 +51,14 @@ class ManageFunctionTests(TestCase):
         #Restore DEFAULT_GROUPS_MODULE setting
         settings.DEFAULT_GROUPS_MODULE = 'test_app.groups'
 
+    def test_global_permission_manager(self):
+        from serious_django_permissions.models import GlobalPermission
+        create_permissions.Command().handle()
+        query = GlobalPermission.objects.get_queryset()
+
+        for item in query:
+            self.assertTrue(isinstance(item, GlobalPermission))
+
 
 class UserLevelTests(TestCase):
 
