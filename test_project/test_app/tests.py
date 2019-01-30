@@ -116,14 +116,14 @@ class UserLevelTests(TestCase):
     def test_invalid_permission_name(self):
         with self.assertRaises(ImproperlyConfigured) as e:
             from .permissions_invalid_name import InvalidName
-        self.assertEqual("A Permission class's name must end with 'Permission'.",
+        self.assertIn("must end with 'Permission'.",
             str(e.exception)
         )
 
     def test_missing_description(self):
         with self.assertRaises(ImproperlyConfigured) as e:
             from .permissions_missing_description import MissingDPermission
-        self.assertEqual("A Permission class must have a 'description' attribute.",
+        self.assertIn("must have a 'description' attribute.",
             str(e.exception)
         )
 
@@ -166,7 +166,7 @@ class GroupLevelTests(TestCase):
     def test_invalid_group_name(self):
         with self.assertRaises(ImproperlyConfigured) as e:
             from .groups_invalid_name import InvalidName
-        self.assertEqual("A Group class's name must end with 'Group'.",
+        self.assertIn("must end with 'Group'.",
             str(e.exception)
         )
 
