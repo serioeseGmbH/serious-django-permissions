@@ -225,3 +225,4 @@ GitHub.sublime-settings
 
 # custom project based ignored files
 
+/.idea

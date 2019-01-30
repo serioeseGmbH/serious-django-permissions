@@ -17,18 +17,18 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """
             This method looks at the module set in DEFAULT_GROUPS_FILE and
-            searches for classes that are inheriting our Group class. 
+            searches for classes that are inheriting our Group class.
             It creates a Django Group with associated permissions for each found.
         """
         from .create_permissions import Command as CreatePermissionsCommand
         CreatePermissionsCommand().handle()
 
-        try:
+        if not getattr(settings, 'DEFAULT_GROUPS_MODULE', None):
+            raise AttributeError("DEFAULT_GROUPS_MODULE setting is not set!")
+
+        else:
             groups_module = settings.DEFAULT_GROUPS_MODULE
-        except AttributeError:
-            print("DEFAULT_GROUPS_MODULE setting is not set!", file=sys.stderr)
-            return
-        
+
         lib = importlib.import_module(groups_module)
         for name, obj in inspect.getmembers(lib):
             if type(obj) == type(Group) and issubclass(obj, Group)\

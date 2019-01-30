@@ -45,6 +45,8 @@ Quick start
 
      from serious_django_permissions.permissions import Permission
 
+     from .models import MyModel
+
      class MyPermission(Permission):
          model = 'MyModel' # should be a model inside myapp.models, or not defined for global permissions.
 	 description = 'A description for this permission'
@@ -79,3 +81,10 @@ Quick start
 	DEFAULT_GROUPS_MODULE = 'some_app.groups'
 
    3. Run ``python manage.py create_groups`` to create all permissions and assign them to the groups.
+
+
+Authorization
+-------------
+
+Setting a permission for a model does not automatically restrict the access to the model.
+Authorization still has to be checked via the view. Check the `Django documentation on how to authorize access to views <https://docs.djangoproject.com/en/2.1/topics/auth/default/#authentication-in-web-requests>`_ for further information.

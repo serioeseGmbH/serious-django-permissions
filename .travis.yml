@@ -1,8 +1,8 @@
 language: python
 python:
   - "3.6"
-install: pip install django
-script: true # this command exits with 0
+install: pip install django -e .
+script: python test_project/manage.py test test_project
 deploy:
   provider: pypi
   user: serioeseGmbH
