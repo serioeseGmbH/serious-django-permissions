@@ -42,11 +42,26 @@ class ManageFunctionTests(TestCase):
         perm = Permission.objects.filter(codename=GlobalPermission.codename)
         self.assertTrue(perm, 'The permission should exist, but it doesnt.')
 
-    def test_invalid_default_group(self):
+    def test_missing_default_group(self):
         del settings.DEFAULT_GROUPS_MODULE
 
-        create_groups.Command().handle()
-        #TODO: hide and test stdout: self.assertEquals("DEFAULT_GROUPS_MODULE setting is not set!", output)
+        with self.assertRaises(AttributeError) as e:
+            create_groups.Command().handle()
+        self.assertIn("DEFAULT_GROUPS_MODULE setting is not set!",
+            str(e.exception)
+        )
+
+        #Restore DEFAULT_GROUPS_MODULE setting
+        settings.DEFAULT_GROUPS_MODULE = 'test_app.groups'
+
+    def test_invalid_default_group(self):
+        settings.DEFAULT_GROUPS_MODULE = None
+
+        with self.assertRaises(AttributeError) as e:
+            create_groups.Command().handle()
+        self.assertIn("DEFAULT_GROUPS_MODULE setting is not set!",
+            str(e.exception)
+        )
 
         #Restore DEFAULT_GROUPS_MODULE setting
         settings.DEFAULT_GROUPS_MODULE = 'test_app.groups'
