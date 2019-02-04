@@ -6,6 +6,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 
 from serious_django_permissions.management.commands import create_permissions, create_groups
+from serious_django_permissions.helpers import setup_permissions
 
 from .models import RestrictedModel, UnrestrictedModel
 from .permissions import RestrictedModelPermission, GlobalPermission
@@ -73,6 +74,19 @@ class ManageFunctionTests(TestCase):
 
         for item in query:
             self.assertTrue(isinstance(item, GlobalPermission))
+
+    def test_permission_helper(self):
+        perm = Permission.objects.filter(codename=RestrictedModelPermission.codename)
+        self.assertFalse(perm, 'The permission should not exist yet, but it does.')
+        group = Group.objects.filter(name=AuthorizedGroup.group_name)
+        self.assertFalse(group, 'The group should not exist yet, but it does.')
+
+        setup_permissions(self)
+
+        perm = Permission.objects.filter(codename=RestrictedModelPermission.codename)
+        self.assertTrue(perm, 'The permission should exist, but it doesnt.')
+        group = Group.objects.filter(name=AuthorizedGroup.group_name)
+        self.assertTrue(group, 'The group should not exist yet, but it does.')
 
 
 class UserLevelTests(TestCase):
