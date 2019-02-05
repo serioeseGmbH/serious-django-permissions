@@ -9,7 +9,7 @@ from serious_django_permissions.management.commands import create_permissions, c
 
 from .models import RestrictedModel, UnrestrictedModel
 from .permissions import RestrictedModelPermission, GlobalPermission
-from .groups import AuthorizedGroup
+from .groups import AuthorizedGroup, AuthorizedGlobalPermissionGroup
 from .views import restricted_model_view, restricted_global_view
 
 
@@ -176,6 +176,10 @@ class GroupLevelTests(TestCase):
         self.assertIn("A Group class must have a 'permissions' attribute",
             str(e.exception)
         )
+
+    def test_global_permission_via_group(self):
+        self.authorized_user.groups.add(AuthorizedGlobalPermissionGroup.get_or_create()[0].pk)
+        self.assertTrue(self.authorized_user.has_perm(GlobalPermission))
 
 
 class GlobalLevelTests(TestCase):

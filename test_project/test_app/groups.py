@@ -1,6 +1,6 @@
 from serious_django_permissions.groups import Group
 
-from test_app.permissions import RestrictedModelPermission
+from test_app.permissions import RestrictedModelPermission, GlobalPermission
 
 class AuthorizedGroup(Group):
     permissions = [
@@ -10,3 +10,8 @@ class AuthorizedGroup(Group):
 class UnauthorizedGroup(Group):
     permissions = [
             ]
+
+class AuthorizedGlobalPermissionGroup(Group):
+    permissions = [
+        GlobalPermission
+    ]
