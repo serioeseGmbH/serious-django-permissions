@@ -47,3 +47,7 @@ class Group(ABC, metaclass=GroupMetaclass):
         return DjangoGroup.objects.get_or_create(
             name=cls.group_name,
         )
+
+    @classmethod
+    def id(cls):
+        return DjangoGroup.objects.get(name=cls.group_name).pk

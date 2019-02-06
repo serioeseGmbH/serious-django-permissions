@@ -163,7 +163,7 @@ class GroupLevelTests(TestCase):
         create_permissions.Command().handle()
         create_groups.Command().handle()
 
-        self.authorized_user.groups.add(AuthorizedGroup.get_or_create()[0].pk)
+        self.authorized_user.groups.add(AuthorizedGroup.id())
 
         self.factory = RequestFactory()
 
@@ -202,7 +202,7 @@ class GroupLevelTests(TestCase):
         )
 
     def test_global_permission_via_group(self):
-        self.authorized_user.groups.add(AuthorizedGlobalPermissionGroup.get_or_create()[0].pk)
+        self.authorized_user.groups.add(AuthorizedGlobalPermissionGroup.id())
         self.assertTrue(self.authorized_user.has_perm(GlobalPermission))
 
 
