@@ -7,6 +7,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Permission as DjangoPermission
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
+from django.db import models
 
 from .helpers import camel_to_snake
 from .models import GlobalPermission
@@ -62,10 +63,21 @@ class Permission(ABC, metaclass=PermissionMetaclass):
         database, or retrieving a matching instance already stored in the DB.
         """
         if cls.model is not None:
-            content_type = ContentType.objects.get(
-                app_label=cls.app_label,
-                model=cls.model.lower()
-            )
+            if isinstance(cls.model, str):
+                content_type = ContentType.objects.get(
+                    app_label=cls.app_label,
+                    model=cls.model.lower()
+                )
+            elif issubclass(cls.model, models.Model):
+                content_type = ContentType.objects.get_for_model(
+                    cls.model,
+                    for_concrete_model=False
+                )
+            else:
+                raise ValueError(
+                    "{}.model is not a string or models.Model subclass!".format(cls)
+                )
+
             return DjangoPermission.objects.get_or_create(
                 codename=cls.codename,
                 name=cls.description,

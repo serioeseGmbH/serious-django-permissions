@@ -7,10 +7,11 @@ from django.conf import settings
 
 from serious_django_permissions.management.commands import create_permissions, create_groups
 
-from .models import RestrictedModel, UnrestrictedModel
-from .permissions import RestrictedModelPermission, GlobalPermission
+from .permissions import RestrictedModelPermission, GlobalPermission,\
+    ExplicitReferenceToRestrictedModelPermission
 from .groups import AuthorizedGroup, AuthorizedGlobalPermissionGroup
-from .views import restricted_model_view, restricted_global_view
+from .views import restricted_model_view, restricted_global_view,\
+    restricted_model_with_explicit_reference_view
 
 
 class ManageFunctionTests(TestCase):
@@ -22,6 +23,15 @@ class ManageFunctionTests(TestCase):
         create_permissions.Command().handle()
 
         perm = Permission.objects.filter(codename=RestrictedModelPermission.codename)
+        self.assertTrue(perm, 'The permission should exist, but it doesnt.')
+
+    def test_create_explicit_referencing_permissions(self):
+        perm = Permission.objects.filter(codename=ExplicitReferenceToRestrictedModelPermission.codename)
+        self.assertFalse(perm, 'The permission should not exist yet, but it does.')
+
+        create_permissions.Command().handle()
+
+        perm = Permission.objects.filter(codename=ExplicitReferenceToRestrictedModelPermission.codename)
         self.assertTrue(perm, 'The permission should exist, but it doesnt.')
 
     def test_create_group_permissions(self):
@@ -82,8 +92,13 @@ class UserLevelTests(TestCase):
         cls.authorized_user = get_user_model().objects.create(
             username='authorized_user'
         )
+        cls.authorized_user_explicit = get_user_model().objects.create(
+            username='authorized_user_explicit'
+        )
         perm, created_at = RestrictedModelPermission.get_or_create()
         cls.authorized_user.user_permissions.add(perm)
+        explicit_perm, created_at = ExplicitReferenceToRestrictedModelPermission.get_or_create()
+        cls.authorized_user_explicit.user_permissions.add(explicit_perm)
 
         cls.unauthorized_user = get_user_model().objects.create(
             username='unauthorized_user'
@@ -95,9 +110,11 @@ class UserLevelTests(TestCase):
         self.assertFalse(self.unauthorized_user.has_perm(RestrictedModelPermission))
         self.assertFalse(RestrictedModelPermission.user_has_perm(self.unauthorized_user))
 
-    def test_authorized_user_has_permission(self):
+    def test_authorized_users_have_permission(self):
         self.assertTrue(self.authorized_user.has_perm(RestrictedModelPermission))
         self.assertTrue(RestrictedModelPermission.user_has_perm(self.authorized_user))
+        self.assertTrue(self.authorized_user_explicit.has_perm(ExplicitReferenceToRestrictedModelPermission))
+        self.assertTrue(ExplicitReferenceToRestrictedModelPermission.user_has_perm(self.authorized_user_explicit))
 
     def test_unauthorized_user_accessing_view(self):
         request = self.factory.get('/restricted-model-view')
@@ -106,10 +123,17 @@ class UserLevelTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
-    def test_authorized_user_accessing_view(self):
+    def test_authorized_users_accessing_view(self):
         request = self.factory.get('/restricted-model-view')
         request.user = self.authorized_user
         response = restricted_model_view(request)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_authorized_users_accessing_view_with_explicit_reference(self):
+        request = self.factory.get('/restricted-model-view-explicit')
+        request.user = self.authorized_user_explicit
+        response = restricted_model_with_explicit_reference_view(request)
 
         self.assertEqual(response.status_code, 200)
 
