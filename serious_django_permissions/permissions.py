@@ -42,9 +42,11 @@ class PermissionMetaclass(ABCMeta):
         if not hasattr(cls, 'codename'):
             cls.codename = camel_to_snake(name[:-10])
 
-        cls.__perm_str__ = '{}.{}'.format(cls.app_label, cls.codename)
         if cls.model is None:
-            cls.__perm_str__ = 'serious_django_permissions.{}'.format(cls.__perm_str__)
+            cls.codename = '{}.{}'.format(cls.app_label, cls.codename)
+            cls.__perm_str__ = 'serious_django_permissions.{}'.format(cls.codename)
+        else:
+            cls.__perm_str__ = '{}.{}'.format(cls.app_label, cls.codename)
 
         return cls
 
@@ -59,7 +61,6 @@ class Permission(ABC, metaclass=PermissionMetaclass):
         Convenience method for creating and returning this permission in the
         database, or retrieving a matching instance already stored in the DB.
         """
-        content_type = None
         if cls.model is not None:
             content_type = ContentType.objects.get(
                 app_label=cls.app_label,
@@ -71,7 +72,6 @@ class Permission(ABC, metaclass=PermissionMetaclass):
                 content_type=content_type
             )
         else:
-            cls.codename = cls.app_label + '.' + cls.codename
             return GlobalPermission.objects.get_or_create(
                 codename=cls.codename,
                 name=cls.description
