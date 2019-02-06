@@ -31,6 +31,12 @@ class PermissionMetaclass(ABCMeta):
         )
         cls.app_label = app_config.name
 
+        if not hasattr(cls, 'model'):
+            raise ImproperlyConfigured(
+                "A Permission must contain an explicit `model` attribute. "
+                "If you want to define this permission as global, set `model` "
+                "to None explicitly."
+            )
         if not name.endswith('Permission'):
             raise ImproperlyConfigured(
                 "A Permission class's name must end with 'Permission'."
