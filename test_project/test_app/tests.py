@@ -6,6 +6,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
 
 from serious_django_permissions.management.commands import create_permissions, create_groups
+from serious_django_permissions.helpers import setup_permissions
 
 from .permissions import RestrictedModelPermission, GlobalPermission,\
     ExplicitReferenceToRestrictedModelPermission
@@ -41,7 +42,7 @@ class ManageFunctionTests(TestCase):
         create_groups.Command().handle()
 
         perm = Group.objects.filter(name=AuthorizedGroup.group_name)
-        self.assertTrue(perm, 'The group should not exist yet, but it does.')
+        self.assertTrue(perm, 'The group should exist, but it doesnt.')
 
     def test_create_global_permission(self):
         perm = Permission.objects.filter(codename=GlobalPermission.codename)
@@ -83,6 +84,15 @@ class ManageFunctionTests(TestCase):
 
         for item in query:
             self.assertTrue(isinstance(item, GlobalPermission))
+
+    def test_setup_permissions_helper(self):
+        perm = Group.objects.filter(name=AuthorizedGroup.group_name)
+        self.assertFalse(perm, 'The group should not exist yet, but it does.')
+
+        setup_permissions()
+
+        perm = Group.objects.filter(name=AuthorizedGroup.group_name)
+        self.assertTrue(perm, 'The group should exist, but it doesnt.')
 
 
 class UserLevelTests(TestCase):
@@ -150,6 +160,7 @@ class UserLevelTests(TestCase):
         self.assertIn("must have a 'description' attribute.",
             str(e.exception)
         )
+
 
 class GroupLevelTests(TestCase):
 

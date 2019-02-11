@@ -17,7 +17,7 @@ def camel_to_snake(name):
     return all_cap_re.sub(r'\1_\2', s1).lower()
 
 
-def create_permissions(self, *args, **options):
+def create_permissions(*args, **options):
     for app in settings.INSTALLED_APPS:
             lib = importlib.util.find_spec("{}.permissions".format(app))
             if lib:
@@ -27,7 +27,7 @@ def create_permissions(self, *args, **options):
                        and obj.__base__ != ABC:
                         perm, created_at = obj.get_or_create()
 
-def create_groups(self, *args, **options):
+def create_groups(*args, **options):
     create_permissions()
 
     if not getattr(settings, 'DEFAULT_GROUPS_MODULE', None):
@@ -47,5 +47,4 @@ def create_groups(self, *args, **options):
             group.permissions.set(perm_db_objs)
 
 def setup_permissions():
-    # TODO: Add test
     create_groups()

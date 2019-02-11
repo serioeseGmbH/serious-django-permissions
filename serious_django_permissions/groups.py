@@ -3,7 +3,6 @@ from abc import ABC, ABCMeta
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.models import Group as DjangoGroup
 
-from .helpers import camel_to_snake
 from .permissions import Permission
 
 
@@ -32,6 +31,7 @@ class GroupMetaclass(ABCMeta):
             )
 
         if not hasattr(cls, 'group_name'):
+            from .helpers import camel_to_snake
             cls.group_name = camel_to_snake(name[:-5])
 
         return cls
