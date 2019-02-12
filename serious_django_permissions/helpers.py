@@ -6,8 +6,6 @@ import inspect
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from .permissions import Permission
-from .groups import Group
 
 # https://stackoverflow.com/a/1176023/3090225
 first_cap_re = re.compile('(.)([A-Z][a-z]+)')
@@ -18,6 +16,8 @@ def camel_to_snake(name):
 
 
 def create_permissions(*args, **options):
+    from .permissions import Permission
+
     for app in settings.INSTALLED_APPS:
             lib = importlib.util.find_spec("{}.permissions".format(app))
             if lib:
@@ -28,6 +28,8 @@ def create_permissions(*args, **options):
                         perm, created_at = obj.get_or_create()
 
 def create_groups(*args, **options):
+    from .groups import Group
+
     create_permissions()
 
     if not getattr(settings, 'DEFAULT_GROUPS_MODULE', None):

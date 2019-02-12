@@ -10,6 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
 from .models import GlobalPermission
+from .helpers import camel_to_snake
 
 
 class PermissionMetaclass(ABCMeta):
@@ -46,7 +47,6 @@ class PermissionMetaclass(ABCMeta):
             )
 
         if not hasattr(cls, 'codename'):
-            from .helpers import camel_to_snake
             cls.codename = camel_to_snake(name[:-10])
 
         if cls.model is None:
