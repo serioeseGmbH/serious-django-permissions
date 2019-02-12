@@ -3,8 +3,8 @@ from abc import ABC, ABCMeta
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.models import Group as DjangoGroup
 
-from .helpers import camel_to_snake
 from .permissions import Permission
+from .helpers import camel_to_snake
 
 
 class GroupMetaclass(ABCMeta):

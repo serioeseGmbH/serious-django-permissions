@@ -9,8 +9,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
-from .helpers import camel_to_snake
 from .models import GlobalPermission
+from .helpers import camel_to_snake
 
 
 class PermissionMetaclass(ABCMeta):

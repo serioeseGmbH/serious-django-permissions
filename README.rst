@@ -53,6 +53,12 @@ Quick start
 
 5. Run ``python manage.py create_permissions`` to create all defined permissions on the database level.
 
+*New in version 0.7:* Create all permissions (including groups) programmatically by calling ``setup_permissions()``::
+
+  from serious_django_permissions.helpers import setup_permissions
+
+  setup_permissions()
+
 6. If you'd like to use the Groups feature as well:
 
    1. Create a file named something like ``some_app/groups.py`` inside one of your apps, or in the folder where your settings live. An example::
