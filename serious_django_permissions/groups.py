@@ -8,6 +8,9 @@ from .helpers import camel_to_snake
 
 
 class GroupMetaclass(ABCMeta):
+    def __int__(cls):
+        return cls.get_or_create()[0].pk
+
     def __new__(mcls, name, *args, **kwargs):
         cls = super(GroupMetaclass, mcls).__new__(mcls, name, *args, **kwargs)
         if cls.__base__ == ABC:
