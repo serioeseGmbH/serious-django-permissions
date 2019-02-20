@@ -1,0 +1,29 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+backcall = "==0.1.0"
+decorator = "==4.3.2"
+ipython = "==7.2.0"
+jedi = "==0.13.2"
+parso = "==0.3.2"
+pexpect = "==4.6.0"
+pickleshare = "==0.7.5"
+ptyprocess = "==0.6.0"
+pytz = "==2018.9"
+serious-django-permissions = {path = ".."}
+six = "==1.12.0"
+traitlets = "==4.3.2"
+wcwidth = "==0.1.7"
+Django = "==2.1.5"
+ipython_genutils = "==0.2.0"
+prompt_toolkit = "==2.0.7"
+Pygments = "==2.3.1"
+django-guardian = "*"
+
+[requires]
+python_version = "3.7"
