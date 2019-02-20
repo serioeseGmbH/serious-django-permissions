@@ -20,6 +20,7 @@ setup(
     author_email='simon@serioese.gmbh',
     install_requires=[
         'django',
+        'django-guardian',
     ],
     classifiers=[
         'Environment :: Web Environment',
