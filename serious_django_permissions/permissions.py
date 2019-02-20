@@ -9,13 +9,25 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
+from guardian.backends import ObjectPermissionChecker
+
 from .models import GlobalPermission
 from .helpers import camel_to_snake
 
 
 class PermissionMetaclass(ABCMeta):
-    def __iter__(mcls):
-        return iter([mcls])
+    def __iter__(cls):
+        # Adding this method enables a Permission subclass to be
+        # as a list of permissions, which makes checks more idiomatic
+        return iter([cls])
+
+    def split(cls, *args, **kwargs):
+        # Adding this method is a hacky way of enabling usage of
+        # guardian.shortcuts.assign_perm, which expects either a Django Permission
+        # object or a string, and for the latter just expects that `.split()` is
+        # present on the object. We pretend to be a string in the eyes of `assign_perm`
+        # by adding this method.
+        return cls.codename.split(*args, **kwargs)
 
     def __new__(mcls, name, *args, **kwargs):
         cls = super(PermissionMetaclass, mcls).__new__(mcls, name, *args, **kwargs)
@@ -106,4 +118,9 @@ class PermissionModelBackend(ModelBackend):
             perm_str = perm.__perm_str__
         else:
             perm_str = perm
+
+        if obj is not None: # use django-guardian check if obj is passed
+            check = ObjectPermissionChecker(user_obj)
+            return check.has_perm(perm_str, obj)
+
         return super().has_perm(user_obj, perm_str, obj)

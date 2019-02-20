@@ -252,3 +252,33 @@ class GlobalLevelTests(TestCase):
         response = restricted_global_view(request)
 
         self.assertEqual(response.status_code, 200)
+
+
+class ObjectBasedPermissionsTests(TestCase):
+    @classmethod
+    def setUp(self):
+        self.authorized_user = get_user_model().objects.create(
+            username='authorized_user'
+        )
+        RestrictedModelPermission.get_or_create()  # create the permission in the DB
+
+    def test_object_based_permissions_work_as_intended(self):
+        from guardian.shortcuts import assign_perm
+        from .models import RestrictedModel
+
+        model_instance_a = RestrictedModel.objects.create()
+        model_instance_b = RestrictedModel.objects.create()
+        assign_perm(RestrictedModelPermission, self.authorized_user, model_instance_a)
+
+        self.assertTrue(
+            self.authorized_user.has_perm(
+                RestrictedModelPermission,
+                obj=model_instance_a
+            )
+        )
+        self.assertFalse(
+            self.authorized_user.has_perm(
+                RestrictedModelPermission.codename,
+                obj=model_instance_b
+            )
+        )

@@ -37,12 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'guardian',
     'serious_django_permissions',
     'test_app',
 ]
 
 AUTHENTICATION_BACKENDS = [
     'serious_django_permissions.permissions.PermissionModelBackend',
+    'guardian.backends.ObjectPermissionBackend'
 ]
 
 DEFAULT_GROUPS_MODULE = 'test_app.groups'
