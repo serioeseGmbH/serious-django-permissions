@@ -62,7 +62,7 @@ class ManageFunctionTests(TestCase):
             str(e.exception)
         )
 
-        #Restore DEFAULT_GROUPS_MODULE setting
+        # Restore DEFAULT_GROUPS_MODULE setting
         settings.DEFAULT_GROUPS_MODULE = 'test_app.groups'
 
     def test_invalid_default_group(self):
@@ -74,7 +74,7 @@ class ManageFunctionTests(TestCase):
             str(e.exception)
         )
 
-        #Restore DEFAULT_GROUPS_MODULE setting
+        # Restore DEFAULT_GROUPS_MODULE setting
         settings.DEFAULT_GROUPS_MODULE = 'test_app.groups'
 
     def test_global_permission_manager(self):
@@ -278,7 +278,7 @@ class ObjectBasedPermissionsTests(TestCase):
         )
         self.assertFalse(
             self.authorized_user.has_perm(
-                RestrictedModelPermission.codename,
+                RestrictedModelPermission,
                 obj=model_instance_b
             )
         )
