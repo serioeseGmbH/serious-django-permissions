@@ -29,6 +29,9 @@ class PermissionMetaclass(ABCMeta):
         # string in the eyes of `assign_perm` by adding this method.
         return cls.codename.split(*args, **kwargs)
 
+    def __str__(cls):
+        return cls.__name__
+
     def __new__(mcls, name, *args, **kwargs):
         cls = super(PermissionMetaclass, mcls).__new__(mcls, name, *args, **kwargs)
         if cls.__base__ == ABC:

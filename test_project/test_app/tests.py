@@ -15,8 +15,14 @@ from .views import restricted_model_view, restricted_global_view,\
     restricted_model_with_explicit_reference_view
 
 
-class ManageFunctionTests(TestCase):
+class PermissionTests(TestCase):
+    def test_string_representation_of_subclasses(self):
+        self.assertEqual(str(RestrictedModelPermission),
+                         'RestrictedModelPermission')
+        self.assertEqual(str(GlobalPermission), 'GlobalPermission')
 
+
+class ManageFunctionTests(TestCase):
     def test_create_user_permissions(self):
         perm = Permission.objects.filter(codename=RestrictedModelPermission.codename)
         self.assertFalse(perm, 'The permission should not exist yet, but it does.')
