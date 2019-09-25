@@ -78,10 +78,13 @@ class Permission(ABC, metaclass=PermissionMetaclass):
     description = ""
 
     @classmethod
-    def get_or_create(cls):
+    def _update_or_create(cls):
         """
-        Convenience method for creating and returning this permission in the
-        database, or retrieving a matching instance already stored in the DB.
+        !!! This method is private and is intended to only be called from the
+        create_permissions management command. Do not call it from your code.
+
+        Creates and returns this permission, or updates and returns it based on a
+        matching instance (wrt. codename and content type).
         """
         if cls.model is not None:
             if isinstance(cls.model, str):
@@ -99,13 +102,44 @@ class Permission(ABC, metaclass=PermissionMetaclass):
                     "{}.model is not a string or models.Model subclass!".format(cls)
                 )
 
-            return DjangoPermission.objects.get_or_create(
+            return DjangoPermission.objects.update_or_create(
                 codename=cls.codename,
-                name=cls.description,
-                content_type=content_type
+                content_type=content_type,
+                defaults={'name': cls.description},
             )
         else:
-            return GlobalPermission.objects.get_or_create(
+            return GlobalPermission.objects.update_or_create(
+                codename=cls.codename,
+                name=cls.description
+            )
+
+    @classmethod
+    def get(cls):
+        """
+        Returns the DB instance representing this permission.
+        """
+        if cls.model is not None:
+            if isinstance(cls.model, str):
+                content_type = ContentType.objects.get(
+                    app_label=cls.app_label,
+                    model=cls.model.lower()
+                )
+            elif issubclass(cls.model, models.Model):
+                content_type = ContentType.objects.get_for_model(
+                    cls.model,
+                    for_concrete_model=False
+                )
+            else:
+                raise ValueError(
+                    "{}.model is not a string or models.Model subclass!".format(cls)
+                )
+
+            return DjangoPermission.objects.get(
+                codename=cls.codename,
+                content_type=content_type,
+            )
+        else:
+            return GlobalPermission.objects.get(
                 codename=cls.codename,
                 name=cls.description
             )

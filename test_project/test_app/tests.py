@@ -110,15 +110,17 @@ class UserLevelTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        create_permissions.Command().handle()
+
         cls.authorized_user = get_user_model().objects.create(
             username='authorized_user'
         )
         cls.authorized_user_explicit = get_user_model().objects.create(
             username='authorized_user_explicit'
         )
-        perm, created_at = RestrictedModelPermission.get_or_create()
+        perm = RestrictedModelPermission.get()
         cls.authorized_user.user_permissions.add(perm)
-        explicit_perm, created_at = ExplicitReferenceToRestrictedModelPermission.get_or_create()
+        explicit_perm = ExplicitReferenceToRestrictedModelPermission.get()
         cls.authorized_user_explicit.user_permissions.add(explicit_perm)
 
         cls.unauthorized_user = get_user_model().objects.create(
@@ -232,10 +234,12 @@ class GlobalLevelTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        create_permissions.Command().handle()
+
         cls.authorized_user = get_user_model().objects.create(
             username='authorized_user'
         )
-        perm, created_at = GlobalPermission.get_or_create()
+        perm = GlobalPermission.get()
         cls.authorized_user.user_permissions.add(perm)
 
         cls.unauthorized_user = get_user_model().objects.create(
@@ -268,10 +272,12 @@ class GlobalLevelTests(TestCase):
 class ObjectBasedPermissionsTests(TestCase):
     @classmethod
     def setUp(self):
+        create_permissions.Command().handle()
+
         self.authorized_user = get_user_model().objects.create(
             username='authorized_user'
         )
-        RestrictedModelPermission.get_or_create()  # create the permission in the DB
+        RestrictedModelPermission.get()  # create the permission in the DB
 
     def test_object_based_permissions_work_as_intended(self):
         from guardian.shortcuts import assign_perm

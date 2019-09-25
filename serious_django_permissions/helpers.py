@@ -25,7 +25,7 @@ def create_permissions(*args, **options):
                 for name, obj in inspect.getmembers(lib):
                     if type(obj) == type(Permission) and issubclass(obj, Permission)\
                        and obj.__base__ != ABC:
-                        perm, created_at = obj.get_or_create()
+                        perm, created_at = obj._update_or_create()
 
 def create_groups(*args, **options):
     from .groups import Group
@@ -42,9 +42,9 @@ def create_groups(*args, **options):
     for name, obj in inspect.getmembers(lib):
         if type(obj) == type(Group) and issubclass(obj, Group)\
            and obj.__base__ != ABC:
-            group, created_at = obj.get_or_create()
+            group, created_at = obj._update_or_create()
             perm_db_objs = [
-                perm.get_or_create()[0] for perm in obj.permissions
+                perm.get() for perm in obj.permissions
             ]
             group.permissions.set(perm_db_objs)
 

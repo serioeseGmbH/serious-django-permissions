@@ -9,7 +9,7 @@ from .helpers import camel_to_snake
 
 class GroupMetaclass(ABCMeta):
     def __int__(cls):
-        return cls.get_or_create()[0].pk
+        return cls.get().pk
 
     def __str__(cls):
         return cls.__name__
@@ -45,11 +45,24 @@ class GroupMetaclass(ABCMeta):
 
 class Group(ABC, metaclass=GroupMetaclass):
     @classmethod
-    def get_or_create(cls):
+    def get(cls):
         """
-        Convenience method for creating and returning this group in the
-        database, or retrieving a matching instance already stored in the DB.
+        Returns the DB instance representing this group.
         """
-        return DjangoGroup.objects.get_or_create(
+        return DjangoGroup.objects.get(
+            name=cls.group_name,
+        )
+
+    @classmethod
+    def _update_or_create(cls):
+        """
+        !!! This method is private and is intended to only be called from the
+        create_permissions management command. Do not call it from your code.
+
+        Creates and returns this group, or updates and returns it based on a
+        matching instance.
+        """
+
+        return DjangoGroup.objects.update_or_create(
             name=cls.group_name,
         )
