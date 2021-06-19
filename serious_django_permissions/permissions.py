@@ -157,6 +157,8 @@ class PermissionModelBackend(ModelBackend):
             perm_str = perm
 
         if obj is not None:  # use django-guardian check if obj is passed
+	    if "has_object_permission" in dir(perm): # do programatic checks…
+                return perm.has_object_permission(user_obj, obj)
             check = ObjectPermissionChecker(user_obj)
             return check.has_perm(perm_str, obj)
 
